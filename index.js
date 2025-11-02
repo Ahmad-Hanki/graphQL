@@ -62,6 +62,42 @@ const resolvers = {
       return games.find((game) => game.id == parents.game_id);
     },
   },
+
+  Mutation: {
+    deleteGame(parents, args, context) {
+      const { id } = args;
+      const gameIndex = games.findIndex((game) => game.id == id);
+      if (gameIndex == -1) {
+        throw new Error("Game not found");
+      }
+      games.splice(gameIndex, 1);
+      return games;
+    },
+
+    addGame(parents, args, context) {
+      const { game } = args;
+      const newGame = {
+        id: String(games.length + 1),
+        title: game.title,
+        platform: game.platform,
+      };
+      games.push(newGame);
+      return newGame;
+    },
+
+    updateGame(parents, args, context) {
+      const { id, game } = args;
+      const gameIndex = games.findIndex((g) => g.id == id);
+      if (gameIndex == -1) {
+        throw new Error("Game not found");
+      }
+      games[gameIndex] = {
+        ...games[gameIndex],
+        ...game,
+      };
+      return games[gameIndex];
+    },
+  },
 };
 
 const server = new ApolloServer({
